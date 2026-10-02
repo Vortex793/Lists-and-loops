@@ -10,6 +10,12 @@ namespace Lists_and_loops
         private SpriteBatch _spriteBatch;
         private SpriteFont _font;
 
+
+        enum screen
+        {
+            menu,
+            main,
+        }
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -44,13 +50,13 @@ namespace Lists_and_loops
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
 
             // DrawString takes: font, text string, position (Vector2), and color
-            _spriteBatch.DrawString(_font, "Hello World!", new Vector2(100, 100), Color.White);
+            _spriteBatch.DrawString(_font, "Curtis Apfelbeck", new Vector2(30, 100), Color.Red);
 
             _spriteBatch.End();
 
