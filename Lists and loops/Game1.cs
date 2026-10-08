@@ -24,6 +24,8 @@ namespace Lists_and_loops
 
         MouseState mouseState;
 
+        MouseState previousMouseState;
+
         Vector2 mousePosition;
 
         enum Screen
@@ -48,6 +50,8 @@ namespace Lists_and_loops
             jacksonGuitarRect = new Rectangle(670, 130, 100, 350);
 
             startButton = new Rectangle(350, 50, 100, 50);
+
+            screen = Screen.menu;
             base.Initialize();
         }
 
@@ -78,13 +82,48 @@ namespace Lists_and_loops
 
             // TODO: Add your update logic here
 
-            screen = Screen.menu;
+            
             mouseState = Mouse.GetState();
             mousePosition = mouseState.Position.ToVector2();
-            if (mouseState.LeftButton == ButtonState.Pressed && startButton.Contains(mouseState.Position))
+
+
+
+
+            // MENU
+            if (screen == Screen.menu)
             {
-                screen = Screen.main;
+                if (mouseState.LeftButton == ButtonState.Pressed &&
+                    startButton.Contains(mouseState.Position))
+                {
+                    screen = Screen.main;
+                }
             }
+
+            // MAIN SCREEN
+            else if (screen == Screen.main)
+            {
+                // Left click = add a guitar
+                if (mouseState.LeftButton == ButtonState.Pressed &&
+                    previousMouseState.LeftButton == ButtonState.Released)
+                {
+                    Random random = new Random();
+                    int guitarIndex = random.Next(guitars.Count);
+
+                    guitars.Add(guitars[guitarIndex]);
+                }
+
+                // Right click = remove a guitar
+                if (mouseState.RightButton == ButtonState.Pressed &&
+                    previousMouseState.RightButton == ButtonState.Released)
+                {
+                    if (guitars.Count > 0)
+                    {
+                        guitars.RemoveAt(guitars.Count - 1);
+                    }
+                }
+            }
+
+            previousMouseState = mouseState;
 
 
 
@@ -99,10 +138,11 @@ namespace Lists_and_loops
             _spriteBatch.Begin();
 
             // DrawString takes: font, text string, position (Vector2), and color
-            _spriteBatch.DrawString(_font, "Curtis Apfelbeck", new Vector2(30, 100), Color.Red);
+            
 
             if (screen == Screen.menu)
             {
+                _spriteBatch.DrawString(_font, "Curtis Apfelbeck", new Vector2(30, 100), Color.Red);
                 _spriteBatch.Draw(sgGuitar, sgGuitarRect, Color.White);
                 _spriteBatch.Draw(lesPaulGuitar, lesPaulGuitarRect, Color.White);
                 _spriteBatch.Draw(jacksonGuitar, jacksonGuitarRect, Color.White);
@@ -114,7 +154,12 @@ namespace Lists_and_loops
             }
             else if (screen == Screen.main)
             {
-                
+                for (int i = 0; i < guitars.Count; i++)
+                {
+                    _spriteBatch.Draw(guitars[i], new Vector2(100 + (i * 200), 200), Color.White);
+
+
+                }
             }
 
 
