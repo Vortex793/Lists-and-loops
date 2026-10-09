@@ -13,14 +13,16 @@ namespace Lists_and_loops
         private SpriteBatch _spriteBatch;
         private SpriteFont _font;
 
-
+        Random random = new Random();
 
         Texture2D stratGuitar, sgGuitar, lesPaulGuitar, jacksonGuitar;
         Rectangle stratGuitarRect, sgGuitarRect, lesPaulGuitarRect, jacksonGuitarRect;
-        Rectangle startButton;
+        Rectangle startButton, window;
         Texture2D redTexture;
 
         List<Texture2D> guitars = new List<Texture2D>();
+        List<Rectangle> guitarRects = new List<Rectangle>();
+        List <Texture2D> guitarTextures = new List<Texture2D>();
 
         MouseState mouseState;
 
@@ -28,6 +30,7 @@ namespace Lists_and_loops
 
         Vector2 mousePosition;
 
+        Random generator = new Random();
         enum Screen
         {
             menu,
@@ -44,6 +47,10 @@ namespace Lists_and_loops
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            window = new Rectangle(0, 0, 800, 600);
+            _graphics.PreferredBackBufferWidth = window.Width;
+            _graphics.PreferredBackBufferHeight = window.Height;
+            _graphics.ApplyChanges();
             stratGuitarRect = new Rectangle(50, 470, 300, 100);
             sgGuitarRect = new Rectangle(300, 470, 300, 160);
             lesPaulGuitarRect = new Rectangle(110, 170, 270, 300);
@@ -71,7 +78,21 @@ namespace Lists_and_loops
             guitars.Add(lesPaulGuitar);
             guitars.Add(jacksonGuitar);
 
-           
+
+            for (int i = 0; i < 4; i++)
+            {
+                guitarRects.Add
+                (
+                    new Rectangle(generator.Next(window.Width - 25),
+                    generator.Next(window.Height - 25), 25, 25)
+                );
+            }
+
+            for (int i = 0; i < guitarRects.Count; i++)
+            {
+                guitarTextures.Add(guitars[generator.Next(guitars.Count)]);
+            }
+
 
         }
 
@@ -105,22 +126,25 @@ namespace Lists_and_loops
                 // Left click = add a guitar
                 if (mouseState.LeftButton == ButtonState.Pressed &&
                     previousMouseState.LeftButton == ButtonState.Released)
-                {
-                    Random random = new Random();
+                {               
                     int guitarIndex = random.Next(guitars.Count);
 
-                    guitars.Add(guitars[guitarIndex]);
-                }
+                    guitarTextures.Add(guitars[guitarIndex]);
 
+                    guitarRects.Add(new Rectangle(generator.Next(window.Width - 100), generator.Next(window.Height), generator.Next(50, 151), generator.Next(50, 151)));
+                }
                 // Right click = remove a guitar
                 if (mouseState.RightButton == ButtonState.Pressed &&
                     previousMouseState.RightButton == ButtonState.Released)
                 {
                     if (guitars.Count > 0)
                     {
-                        guitars.RemoveAt(guitars.Count - 1);
+                        guitarTextures.RemoveAt(guitarTextures.Count - 1);
+                        guitarRects.RemoveAt(guitarRects.Count - 1);
                     }
                 }
+
+                
             }
 
             previousMouseState = mouseState;
@@ -154,10 +178,10 @@ namespace Lists_and_loops
             }
             else if (screen == Screen.main)
             {
-                for (int i = 0; i < guitars.Count; i++)
-                {
-                    _spriteBatch.Draw(guitars[i], new Vector2(100 + (i * 200), 200), Color.White);
-
+               
+                    for (int i = 0; i < guitarRects.Count; i++)
+                    {
+                        _spriteBatch.Draw(guitarTextures[i], guitarRects[i], Color.White);
 
                 }
             }
