@@ -11,13 +11,13 @@ namespace Lists_and_loops
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        private SpriteFont _font;
+        private SpriteFont _menuFont, _font;
 
         Random random = new Random();
 
         Texture2D stratGuitar, sgGuitar, lesPaulGuitar, jacksonGuitar;
         Rectangle stratGuitarRect, sgGuitarRect, lesPaulGuitarRect, jacksonGuitarRect;
-        Rectangle startButton, window;
+        Rectangle startButton, window, clicksCounter;
         Texture2D redTexture;
 
         List<Texture2D> guitars = new List<Texture2D>();
@@ -29,6 +29,8 @@ namespace Lists_and_loops
         MouseState previousMouseState;
 
         Vector2 mousePosition;
+
+        int clicks = 0;
 
         Random generator = new Random();
         enum Screen
@@ -57,6 +59,7 @@ namespace Lists_and_loops
             jacksonGuitarRect = new Rectangle(670, 130, 100, 350);
 
             startButton = new Rectangle(350, 50, 100, 50);
+            clicksCounter = new Rectangle(0, 0, 100, 50);
 
             screen = Screen.menu;
             base.Initialize();
@@ -67,7 +70,8 @@ namespace Lists_and_loops
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            _font = Content.Load<SpriteFont>("Font");
+            _menuFont = Content.Load<SpriteFont>("File");
+            _font = Content.Load<SpriteFont>("font");
             stratGuitar = Content.Load<Texture2D>("strat");
             sgGuitar = Content.Load<Texture2D>("sg");
             lesPaulGuitar = Content.Load<Texture2D>("les paul");
@@ -79,7 +83,7 @@ namespace Lists_and_loops
             guitars.Add(jacksonGuitar);
 
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 0; i++)
             {
                 guitarRects.Add
                 (
@@ -132,6 +136,8 @@ namespace Lists_and_loops
                     guitarTextures.Add(guitars[guitarIndex]);
 
                     guitarRects.Add(new Rectangle(generator.Next(window.Width - 100), generator.Next(window.Height), generator.Next(50, 151), generator.Next(50, 151)));
+
+                    clicks++;
                 }
                 // Right click = remove a guitar
                 if (mouseState.RightButton == ButtonState.Pressed &&
@@ -142,6 +148,8 @@ namespace Lists_and_loops
                         guitarTextures.RemoveAt(guitarTextures.Count - 1);
                         guitarRects.RemoveAt(guitarRects.Count - 1);
                     }
+
+                    clicks--;
                 }
 
                 
@@ -166,24 +174,28 @@ namespace Lists_and_loops
 
             if (screen == Screen.menu)
             {
-                _spriteBatch.DrawString(_font, "Curtis Apfelbeck", new Vector2(30, 100), Color.Red);
+                _spriteBatch.DrawString(_menuFont, "Curtis Apfelbeck", new Vector2(30, 100), Color.Red);
                 _spriteBatch.Draw(sgGuitar, sgGuitarRect, Color.White);
                 _spriteBatch.Draw(lesPaulGuitar, lesPaulGuitarRect, Color.White);
                 _spriteBatch.Draw(jacksonGuitar, jacksonGuitarRect, Color.White);
                 _spriteBatch.Draw(stratGuitar, stratGuitarRect, null, Color.White, MathHelper.ToRadians(270), Vector2.Zero, SpriteEffects.None, 0);
                 _spriteBatch.Draw(sgGuitar, sgGuitarRect, null, Color.White, MathHelper.ToRadians(270), Vector2.Zero, SpriteEffects.None, 0);
                 _spriteBatch.Draw(redTexture, startButton, Color.White);
-                _spriteBatch.DrawString(_font, "Start", new Vector2(30, 50), Color.Red);
+                _spriteBatch.DrawString(_menuFont, "Start", new  Vector2(30, 50), Color.Red);
                 
             }
             else if (screen == Screen.main)
             {
+
                
                     for (int i = 0; i < guitarRects.Count; i++)
                     {
                         _spriteBatch.Draw(guitarTextures[i], guitarRects[i], Color.White);
 
                 }
+
+                _spriteBatch.Draw(redTexture, clicksCounter, Color.White);
+                _spriteBatch.DrawString(_font, "Guitars: " + clicks, new Vector2(10, 10), Color.White);
             }
 
 
