@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
 
 
 namespace Lists_and_loops
@@ -18,7 +20,7 @@ namespace Lists_and_loops
         Texture2D stratGuitar, sgGuitar, lesPaulGuitar, jacksonGuitar;
         Rectangle stratGuitarRect, sgGuitarRect, lesPaulGuitarRect, jacksonGuitarRect;
         Rectangle startButton, window, clicksCounter;
-        Texture2D redTexture;
+        Texture2D redTexture, guitarBG;
 
         List<Texture2D> guitars = new List<Texture2D>();
         List<Rectangle> guitarRects = new List<Rectangle>();
@@ -31,6 +33,11 @@ namespace Lists_and_loops
         Vector2 mousePosition;
 
         int clicks = 0;
+
+        
+
+        SoundEffect note;
+        Song expiration, missingPiece;
 
         Random generator = new Random();
         enum Screen
@@ -77,25 +84,27 @@ namespace Lists_and_loops
             lesPaulGuitar = Content.Load<Texture2D>("les paul");
             jacksonGuitar = Content.Load<Texture2D>("jackson");
             redTexture = Content.Load<Texture2D>("red");
+            guitarBG = Content.Load<Texture2D>("guitarBG");
+            note = Content.Load<SoundEffect>("note");
             guitars.Add(stratGuitar);
             guitars.Add(sgGuitar);
             guitars.Add(lesPaulGuitar);
             guitars.Add(jacksonGuitar);
 
 
-            for (int i = 0; i < 0; i++)
-            {
-                guitarRects.Add
-                (
-                    new Rectangle(generator.Next(window.Width - 25),
-                    generator.Next(window.Height - 25), 25, 25)
-                );
-            }
+            //for (int i = 0; i < 0; i++)
+            //{
+            //    guitarRects.Add
+            //    (
+            //        new Rectangle(generator.Next(window.Width - 25),
+            //        generator.Next(window.Height - 25), 25, 25)
+            //    );
+            //}
 
-            for (int i = 0; i < guitarRects.Count; i++)
-            {
-                guitarTextures.Add(guitars[generator.Next(guitars.Count)]);
-            }
+            //for (int i = 0; i < guitarRects.Count; i++)
+            //{
+            //    guitarTextures.Add(guitars[generator.Next(guitars.Count)]);
+            //}
 
 
         }
@@ -134,22 +143,27 @@ namespace Lists_and_loops
                     int guitarIndex = random.Next(guitars.Count);
 
                     guitarTextures.Add(guitars[guitarIndex]);
+                    int width, height;
+                    width = generator.Next(50, 151);
+                    height = generator.Next(50, 151);
+                    guitarRects.Add(new Rectangle(generator.Next(window.Width - width), generator.Next(window.Height - height), width, height));
 
-                    guitarRects.Add(new Rectangle(generator.Next(window.Width - 100), generator.Next(window.Height), generator.Next(50, 151), generator.Next(50, 151)));
-
-                    clicks++;
+                    note.Play();
+                    //clicks++;
                 }
                 // Right click = remove a guitar
                 if (mouseState.RightButton == ButtonState.Pressed &&
                     previousMouseState.RightButton == ButtonState.Released)
                 {
-                    if (guitars.Count > 0)
+                    if (guitarTextures.Count >= 1)
                     {
                         guitarTextures.RemoveAt(guitarTextures.Count - 1);
                         guitarRects.RemoveAt(guitarRects.Count - 1);
+                        //clicks--;
                     }
+                  
 
-                    clicks--;
+
                 }
 
                 
@@ -187,15 +201,16 @@ namespace Lists_and_loops
             else if (screen == Screen.main)
             {
 
-               
-                    for (int i = 0; i < guitarRects.Count; i++)
+                _spriteBatch.Draw(guitarBG, window, Color.White);
+                for (int i = 0; i < guitarRects.Count; i++)
                     {
                         _spriteBatch.Draw(guitarTextures[i], guitarRects[i], Color.White);
-
+                        
                 }
 
+                
                 _spriteBatch.Draw(redTexture, clicksCounter, Color.White);
-                _spriteBatch.DrawString(_font, "Guitars: " + clicks, new Vector2(10, 10), Color.White);
+                _spriteBatch.DrawString(_font, "Guitars: " + guitarRects.Count, new Vector2(10, 10), Color.White);
             }
 
 
