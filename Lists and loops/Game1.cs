@@ -13,12 +13,12 @@ namespace Lists_and_loops
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        private SpriteFont _menuFont, _font;
+        private SpriteFont _menuFont, _font, _smallerFont;
 
         Random random = new Random();
 
-        Texture2D stratGuitar, sgGuitar, lesPaulGuitar, jacksonGuitar;
-        Rectangle stratGuitarRect, sgGuitarRect, lesPaulGuitarRect, jacksonGuitarRect;
+        Texture2D stratGuitar, sgGuitar, lesPaulGuitar, jacksonGuitar, classicalGuitar;
+        Rectangle stratGuitarRect, sgGuitarRect, lesPaulGuitarRect, jacksonGuitarRect, classicalGuitarRect;
         Rectangle startButton, window, clicksCounter;
         Texture2D redTexture, guitarBG;
 
@@ -37,7 +37,7 @@ namespace Lists_and_loops
         
 
         SoundEffect note;
-        Song expiration, missingPiece;
+        Song missingPiece;
 
         Random generator = new Random();
         enum Screen
@@ -64,9 +64,10 @@ namespace Lists_and_loops
             sgGuitarRect = new Rectangle(300, 470, 300, 160);
             lesPaulGuitarRect = new Rectangle(110, 170, 270, 300);
             jacksonGuitarRect = new Rectangle(670, 130, 100, 350);
+            classicalGuitarRect = new Rectangle(450, 160, 200, 315);
 
-            startButton = new Rectangle(350, 50, 100, 50);
-            clicksCounter = new Rectangle(0, 0, 100, 50);
+            startButton = new Rectangle(420, 200, 100, 50);
+            clicksCounter = new Rectangle(0, 0, 800, 50);
 
             screen = Screen.menu;
             base.Initialize();
@@ -79,13 +80,18 @@ namespace Lists_and_loops
             // TODO: use this.Content to load your game content here
             _menuFont = Content.Load<SpriteFont>("File");
             _font = Content.Load<SpriteFont>("font");
+            _smallerFont = Content.Load<SpriteFont>("smallerFont");
             stratGuitar = Content.Load<Texture2D>("strat");
             sgGuitar = Content.Load<Texture2D>("sg");
             lesPaulGuitar = Content.Load<Texture2D>("les paul");
             jacksonGuitar = Content.Load<Texture2D>("jackson");
+            classicalGuitar = Content.Load<Texture2D>("classical");
             redTexture = Content.Load<Texture2D>("red");
             guitarBG = Content.Load<Texture2D>("guitarBG");
             note = Content.Load<SoundEffect>("note");
+            missingPiece = Content.Load<Song>("MissingDemo");
+            MediaPlayer.IsRepeating = true;
+            MediaPlayer.Play(missingPiece);
             guitars.Add(stratGuitar);
             guitars.Add(sgGuitar);
             guitars.Add(lesPaulGuitar);
@@ -120,7 +126,7 @@ namespace Lists_and_loops
             mouseState = Mouse.GetState();
             mousePosition = mouseState.Position.ToVector2();
 
-
+            
 
 
             // MENU
@@ -131,11 +137,13 @@ namespace Lists_and_loops
                 {
                     screen = Screen.main;
                 }
+
             }
 
             // MAIN SCREEN
             else if (screen == Screen.main)
             {
+
                 // Left click = add a guitar
                 if (mouseState.LeftButton == ButtonState.Pressed &&
                     previousMouseState.LeftButton == ButtonState.Released)
@@ -188,15 +196,17 @@ namespace Lists_and_loops
 
             if (screen == Screen.menu)
             {
-                _spriteBatch.DrawString(_menuFont, "Curtis Apfelbeck", new Vector2(30, 100), Color.Red);
-                _spriteBatch.Draw(sgGuitar, sgGuitarRect, Color.White);
+                _spriteBatch.DrawString(_menuFont, "Curtis Apfelbeck", new Vector2(30, 500), Color.Red);
+
                 _spriteBatch.Draw(lesPaulGuitar, lesPaulGuitarRect, Color.White);
                 _spriteBatch.Draw(jacksonGuitar, jacksonGuitarRect, Color.White);
                 _spriteBatch.Draw(stratGuitar, stratGuitarRect, null, Color.White, MathHelper.ToRadians(270), Vector2.Zero, SpriteEffects.None, 0);
                 _spriteBatch.Draw(sgGuitar, sgGuitarRect, null, Color.White, MathHelper.ToRadians(270), Vector2.Zero, SpriteEffects.None, 0);
+                _spriteBatch.Draw(classicalGuitar, classicalGuitarRect, Color.White);
                 _spriteBatch.Draw(redTexture, startButton, Color.White);
-                _spriteBatch.DrawString(_menuFont, "Start", new  Vector2(30, 50), Color.Red);
-                
+                _spriteBatch.DrawString(_menuFont, "Guitar Clicker ii", new  Vector2(30, 50), Color.Red);
+                _spriteBatch.DrawString(_smallerFont, "Start", new Vector2(425, 215), Color.White);
+
             }
             else if (screen == Screen.main)
             {
@@ -211,6 +221,7 @@ namespace Lists_and_loops
                 
                 _spriteBatch.Draw(redTexture, clicksCounter, Color.White);
                 _spriteBatch.DrawString(_font, "Guitars: " + guitarRects.Count, new Vector2(10, 10), Color.White);
+                _spriteBatch.DrawString(_font, "Left click to add a guitar and right click to remove a guitar", new Vector2(300, 10), Color.White);
             }
 
 
